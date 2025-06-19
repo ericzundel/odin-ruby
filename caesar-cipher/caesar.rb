@@ -1,4 +1,4 @@
-# Implementation oft he Caesar Cipher.
+# Implementation of the Caesar Cipher.
 # https://www.theodinproject.com/lessons/ruby-caesar-cipher
 
 # value - the character ASCII value to encode
