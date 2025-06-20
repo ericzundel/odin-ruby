@@ -20,11 +20,13 @@ end
 #
 # stock_picker([17,3,6,9,15,8,6,1,10])
 #  => [1,4]  # for a profit of $15 - $3 == $12
+#
+# Returns [] if no days found.
 def stock_picker(daily_prices)
 
   # Scan through and look for the max difference between any 2 days
   max_price_diff = 0
-  max_days = [0, 1]
+  max_days = []
 
   daily_prices.each_with_index do |price, day|
     # puts "Day: #{day} price #{price}"
