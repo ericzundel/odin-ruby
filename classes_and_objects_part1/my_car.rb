@@ -1,3 +1,5 @@
+# See https://launchschool.com/books/oo_ruby/read/classes_and_objects_part1
+#
 class MyCar
   attr_reader :year, :model, :speed
   attr_accessor :color
