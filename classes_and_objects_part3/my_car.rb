@@ -10,7 +10,6 @@ end
 
 class Vehicle
   @@num_objects = 0
-
   attr_reader :year, :model, :speed
   attr_accessor :color
 
