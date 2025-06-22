@@ -6,32 +6,32 @@
 # value - the character ASCII value to encode
 # lowest_char - the character for the lowest letter in the alphabet
 # highest_char - the character for the highest letter in the alphabet
-# n - the number to add to the ascii value
-def rotate(value, lowest_char, highest_char, n)
+# key - the number to add to the ascii value
+def rotate(value, lowest_char, highest_char, key)
   if value >= lowest_char.ord && value <= highest_char.ord
-    value += n
+    value += key
     value = lowest_char.ord + (value - highest_char.ord) - 1 if value > highest_char.ord
   end
   value
 end
 
-def caesar_cipher(plaintext, n)
-  ciphertext = ""
+def caesar_cipher(plaintext, key)
+  ciphertext = ''
   plaintext.chars.each do |c|
-    value = rotate(c.ord, "a", "z", n)
-    value = rotate(value, "A", "Z", n)
+    value = rotate(c.ord, 'a', 'z', key)
+    value = rotate(value, 'A', 'Z', key)
     ciphertext += value.chr
   end
   ciphertext
 end
 
-plaintext = ""
+plaintext = ''
 
 if ARGV.length < 2
-  puts "Usage: caesar <n> Message to encode ..."
+  puts 'Usage: caesar <n> Message to encode ...'
   puts
-  puts "n: The number to use to shift the encryption"
-  puts "all other arguments are interpreted as the message to encrypt"
+  puts 'n: The number to use to shift the encryption'
+  puts 'all other arguments are interpreted as the message to encrypt'
   exit 1
 end
 n = ARGV.shift.to_i
