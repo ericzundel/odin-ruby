@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Implementation of the Caesar Cipher.
 # https://www.theodinproject.com/lessons/ruby-caesar-cipher
 
@@ -14,22 +16,22 @@ def rotate(value, lowest_char, highest_char, n)
 end
 
 def caesar_cipher(plaintext, n)
-  ciphertext = ''
+  ciphertext = ""
   plaintext.chars.each do |c|
-    value = rotate(c.ord, 'a', 'z', n)
-    value = rotate(value, 'A', 'Z', n)
+    value = rotate(c.ord, "a", "z", n)
+    value = rotate(value, "A", "Z", n)
     ciphertext += value.chr
   end
   ciphertext
 end
 
-plaintext = ''
+plaintext = ""
 
 if ARGV.length < 2
-  puts 'Usage: caesar <n> Message to encode ...'
+  puts "Usage: caesar <n> Message to encode ..."
   puts
-  puts 'n: The number to use to shift the encryption'
-  puts 'all other arguments are interpreted as the message to encrypt'
+  puts "n: The number to use to shift the encryption"
+  puts "all other arguments are interpreted as the message to encrypt"
   exit 1
 end
 n = ARGV.shift.to_i
