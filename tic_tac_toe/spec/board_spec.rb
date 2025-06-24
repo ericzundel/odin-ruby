@@ -53,11 +53,11 @@ describe 'Board tests' do
 
     it 'o winner vert' do
       board = board_maker
-      board.set_tile_o(0, 0)
+      board.set_tile_o(0, 2)
       expect(board.winner).to eq(Board::IN_PROGRESS)
-      board.set_tile_o(1, 0)
+      board.set_tile_o(1, 2)
       expect(board.winner).to eq(Board::IN_PROGRESS)
-      board.set_tile_o(2, 0)
+      board.set_tile_o(2, 2)
       expect(board.winner).to eq(Board::O_PLAYER)
     end
 

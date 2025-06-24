@@ -15,7 +15,7 @@ class Board
   def initialize(main_win, side_size)
     @grid = Grid.new(side_size)
     @tiles = Array.new(3) { Array.new(3) }
-    tile_size = (side_size / 3) - 2
+    tile_size = (side_size / 3) 
     (0..2).each do |row|
       (0..2).each do |col|
         @tiles[row][col] = Tile.new(main_win, col * tile_size, row * tile_size, (side_size / 3) - 2)
