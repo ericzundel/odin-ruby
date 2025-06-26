@@ -32,3 +32,10 @@ Metrics/PerceivedComplexity:
 
 Metrics/BlockLength:
   Max: 80
+
+# rspec
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
