@@ -22,7 +22,7 @@ end
 
 def run_test2_game(screen, board)
   board.set_tile_o(0, 0)
-  board.set_tile_x(1, 1)  
+  board.set_tile_x(1, 1)
   screen.refresh
 end
 

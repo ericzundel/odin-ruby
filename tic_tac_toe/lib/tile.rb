@@ -51,13 +51,14 @@ class Tile
       end
 
     when O_SYMBOL
-      (1..(@width - 1)).each do |x_val|
+      # draw the horizontal lines of the O.
+      (1..(@width - 2)).each do |x_val|
         @win.setpos(0, x_val)
         @win.addch('O')
         @win.setpos(@height - 1, x_val)
         @win.addch('O')
       end
-      (1..(@height - 1)).each do |y_val|
+      (1..(@height - 2)).each do |y_val|
         @win.setpos(y_val, 0)
         @win.addch('O')
         @win.setpos(y_val, @width - 1)

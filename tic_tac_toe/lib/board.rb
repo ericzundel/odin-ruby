@@ -35,7 +35,10 @@ class Board
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
 
-    @tiles[y_pos][x_pos].value = Tile::X_SYMBOL
+    tile = @tiles[y_pos][x_pos]
+    raise 'Trying to set a tile that is already set!' if tile.value != Tile::EMPTY
+
+    tile.value = Tile::X_SYMBOL
     calc_winner
   end
 
@@ -44,7 +47,10 @@ class Board
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
 
-    @tiles[y_pos][x_pos].value = Tile::O_SYMBOL
+    tile = @tiles[y_pos][x_pos]
+    raise 'Trying to set a tile that is already set!' if tile.value != Tile::EMPTY
+
+    tile.value = Tile::O_SYMBOL
     calc_winner
   end
 
