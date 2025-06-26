@@ -30,7 +30,7 @@ class Board
     @next_player = X_PLAYER
   end
 
-  # add the letter x to a tile
+  # Add the letter x to a tile
   def set_tile_x(x_pos, y_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
@@ -39,7 +39,7 @@ class Board
     calc_winner
   end
 
-  # add the letter o to a tile
+  # Add the letter o to a tile
   def set_tile_o(x_pos, y_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
@@ -51,32 +51,40 @@ class Board
   # Play the turn for the next player
   def next_player_turn
     # set the cursor to the first non-empty tile
-    cursor = [0, 0]
-    (0..2).each do |row|
-      (0..2).each do |col|
-        if @tiles[row][col].value == Tile::EMPTY
-          cursor = [row, col]
-          break
-        end
-      end
-    end
-    selected_tile = choose_tile(cursor)
+    cursor = find_first_empty_tile
+
+    cursor = choose_tile(cursor)
 
     if @next_player == X_PLAYER
-      set_tile_x(selected_tile[1], selected_tile[0])
+      set_tile_x(cursor[1], cursor[0])
       @next_player = O_PLAYER
     else
-      set_tile_o(selected_tile[1], selected_tile[0])
+      set_tile_o(cursor[1], cursor[0])
       @next_player = X_PLAYER
     end
   end
 
   private
 
+  def find_first_empty_tile
+    (0..2).each do |row|
+      (0..2).each do |col|
+        if @tiles[row][col].value == Tile::EMPTY
+          return [row, col]
+        end
+      end
+    end
+    raise RuntimeError, "No empty tiles: We should have determined a winner or tie already!"
+  end
+
+  # Handle keyboard input to allow the user to choose a tile
+  # TODO: skip tiles that are currently occupied
   def choose_tile(cursor)
     loop do
-      highlight_cursor(cursor)
-      case @screen.main_win.getch
+     # highlight_cursor(cursor)
+      @screen.print_status "#{@next_player}: It's your turn, use arrow keys and space to choose a tile #{cursor}: "
+
+      case @screen.getch
       when Curses::Key::UP
         cursor[0] = if cursor[0] != 0
                       cursor[0] - 1
@@ -95,19 +103,21 @@ class Board
         cursor[1] = (cursor[1] + 1) % 3
       when ' '
         # The tile under the cursor is selected
-        clear_cursor
+        #clear_cursor
         break
       end
-      @screen.main_win.refresh
-      cursor
+      @screen.refresh
     end
+    cursor
   end
 
+  # Highlight the tile under the cursor
   # cursor: array of row, col for which tile is selected
   def highlight_cursor(cursor)
     @tiles[cursor[0]][cursor[1]].select
   end
 
+  # Remove the highlight from all tiles
   def clear_cursor
     (0..2).each do |row|
       (0..2).each do |col|
@@ -116,22 +126,20 @@ class Board
     end
   end
 
+  # Go through the puzzle and check to see if either player has won
   def calc_winner
     return @winner if @winner != IN_PROGRESS
 
-    # check rows
-    (0..2).each do |row|
-      winner = test_three_tiles([@tiles[row][0], @tiles[row][1], @tiles[row][2]])
+    # Check rows & columns
+    (0..2).each do |pos|
+      winner = test_three_tiles([@tiles[pos][0], @tiles[pos][1], @tiles[pos][2]])
+      return winner if winner != IN_PROGRESS
+
+      winner = test_three_tiles([@tiles[0][pos], @tiles[1][pos], @tiles[2][pos]])
       return winner if winner != IN_PROGRESS
     end
 
-    # check columns
-    (0..2).each do |col|
-      winner = test_three_tiles([@tiles[0][col], @tiles[1][col], @tiles[2][col]])
-      return winner if winner != IN_PROGRESS
-    end
-
-    # check diagonals
+    # Check diagonals
     winner = test_three_tiles([@tiles[0][0], @tiles[1][1], @tiles[2][2]])
     return winner if winner != IN_PROGRESS
 
@@ -147,6 +155,7 @@ class Board
     @winner = TIE
   end
 
+  # This is a helper method for check_winner to see if three tiles are the same
   def test_three_tiles(test_tiles)
     raise ArgumentError, 'must have 3 tiles' if test_tiles.length != 3
 

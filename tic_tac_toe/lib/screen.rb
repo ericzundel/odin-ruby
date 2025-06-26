@@ -26,6 +26,26 @@ class Screen
     @side_size = [Curses.lines, Curses.cols].min
   end
 
+  def refresh
+    @main_win.refresh
+  end
+
+  def print_status(status)
+    @main_win.setpos(Curses.lines - 1, 0)
+    @main_win.addstr(status)
+    @main_win.clrtoeol
+    @main_win.refresh
+  end
+
+  def getch
+    @main_win.getch
+  end
+
+  def refresh
+    @main_win.refresh
+  end
+  
+  # Call this method before ending the program to restore the screen
   def close
     @main_win.close
   end

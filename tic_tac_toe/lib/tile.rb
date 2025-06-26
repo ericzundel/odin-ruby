@@ -20,10 +20,12 @@ class Tile
 
   def select
     @win.color_set(Screen::HIGHLIGHT_COLOR)
+    draw
   end
 
   def deselect
     @win.color_set(Screen::NORMAL_COLOR)
+    draw
   end
 
   private
