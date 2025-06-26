@@ -22,7 +22,10 @@ class Board
     tile_size = (@screen.side_size / 3)
     (0..2).each do |row|
       (0..2).each do |col|
-        @tiles[row][col] = Tile.new(@screen.main_win, col * tile_size, row * tile_size, (@screen.side_size / 3) - 2)
+        @tiles[row][col] = Tile.new(@screen.main_win,
+                                    row * tile_size,
+                                    col * tile_size,
+                                    (@screen.side_size / 3) - 2)
       end
     end
     @grid.draw(@screen.main_win)
@@ -31,11 +34,11 @@ class Board
   end
 
   # Add the letter x to a tile
-  def set_tile_x(y_pos, x_pos)
-    raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
-    raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
+  def set_tile_x(row, col)
+    raise ArgumentError, 'Column should be a value 0..2' unless col.between?(0, 2)
+    raise ArgumentError, 'Row should be a value 0..2' unless row.between?(0, 2)
 
-    tile = @tiles[y_pos][x_pos]
+    tile = @tiles[row][col]
     raise 'Trying to set a tile that is already set!' if tile.value != Tile::EMPTY
 
     tile.value = Tile::X_SYMBOL
@@ -43,11 +46,11 @@ class Board
   end
 
   # Add the letter o to a tile
-  def set_tile_o(y_pos, x_pos)
-    raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
-    raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
+  def set_tile_o(row, col)
+    raise ArgumentError, 'Column should be a value 0..2' unless col.between?(0, 2)
+    raise ArgumentError, 'Row should be a value 0..2' unless row.between?(0, 2)
 
-    tile = @tiles[y_pos][x_pos]
+    tile = @tiles[row][col]
     raise 'Trying to set a tile that is already set!' if tile.value != Tile::EMPTY
 
     tile.value = Tile::O_SYMBOL
@@ -102,7 +105,8 @@ class Board
   def choose_tile(cursor)
     loop do
       highlight_cursor(cursor)
-      @screen.print_status "#{@next_player}: It's your turn, use arrow keys to move, space to choose #{cursor}: "
+      player_name = @next_player == X_PLAYER ? 'X' : 'Y'
+      @screen.print_status "#{player_name}: It's your turn, use arrow keys to move, space to choose #{cursor}: "
 
       input = @screen.getch
       if input == ' '

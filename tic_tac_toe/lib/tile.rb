@@ -8,7 +8,7 @@ class Tile
 
   attr_reader :value
 
-  def initialize(main_win, x_offset, y_offset, side_size)
+  def initialize(main_win, y_offset, x_offset, side_size)
     @width = side_size - 2
     @height = side_size - 2
     @win = main_win.subwin(@width, @height, x_offset + 2, y_offset + 2)
