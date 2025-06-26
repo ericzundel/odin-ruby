@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+require 'curses'
+
 require_relative './grid'
 require_relative './tile'
+require_relative './screen'
 
 # Container for the entire tic tac toe board
 class Board
@@ -12,19 +15,22 @@ class Board
 
   attr_reader :winner
 
-  def initialize(main_win, side_size)
-    @grid = Grid.new(side_size)
+  def initialize(screen)
+    @screen = screen
+    @grid = Grid.new(@screen.side_size)
     @tiles = Array.new(3) { Array.new(3) }
-    tile_size = (side_size / 3) 
+    tile_size = (@screen.side_size / 3)
     (0..2).each do |row|
       (0..2).each do |col|
-        @tiles[row][col] = Tile.new(main_win, col * tile_size, row * tile_size, (side_size / 3) - 2)
+        @tiles[row][col] = Tile.new(@screen.main_win, col * tile_size, row * tile_size, (@screen.side_size / 3) - 2)
       end
     end
-    @grid.draw(main_win)
+    @grid.draw(@screen.main_win)
     @winner = IN_PROGRESS
+    @next_player = X_PLAYER
   end
 
+  # add the letter x to a tile
   def set_tile_x(x_pos, y_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
@@ -33,6 +39,7 @@ class Board
     calc_winner
   end
 
+  # add the letter o to a tile
   def set_tile_o(x_pos, y_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
@@ -41,7 +48,73 @@ class Board
     calc_winner
   end
 
+  # Play the turn for the next player
+  def next_player_turn
+    # set the cursor to the first non-empty tile
+    cursor = [0, 0]
+    (0..2).each do |row|
+      (0..2).each do |col|
+        if @tiles[row][col].value == Tile::EMPTY
+          cursor = [row, col]
+          break
+        end
+      end
+    end
+    selected_tile = choose_tile(cursor)
+
+    if @next_player == X_PLAYER
+      set_tile_x(selected_tile[1], selected_tile[0])
+      @next_player = O_PLAYER
+    else
+      set_tile_o(selected_tile[1], selected_tile[0])
+      @next_player = X_PLAYER
+    end
+  end
+
   private
+
+  def choose_tile(cursor)
+    loop do
+      highlight_cursor(cursor)
+      case @screen.main_win.getch
+      when Curses::Key::UP
+        cursor[0] = if cursor[0] != 0
+                      cursor[0] - 1
+                    else
+                      2
+                    end
+      when Curses::Key::DOWN
+        cursor[0] = (cursor[0] + 1) % 3
+      when Curses::Key::LEFT
+        cursor[1] = if cursor[1] != 0
+                      cursor[1] - 1
+                    else
+                      2
+                    end
+      when Curses::Key::RIGHT
+        cursor[1] = (cursor[1] + 1) % 3
+      when ' '
+        # The tile under the cursor is selected
+        clear_cursor
+        break
+      end
+      @screen.main_win.refresh
+      cursor
+    end
+  end
+
+  # cursor: array of row, col for which tile is selected
+  def highlight_cursor(cursor)
+    @tiles[cursor[0]][cursor[1]].select
+  end
+
+  def clear_cursor
+    (0..2).each do |row|
+      (0..2).each do |col|
+        @tiles[row][col].deselect
+      end
+    end
+  end
 
   def calc_winner
     return @winner if @winner != IN_PROGRESS

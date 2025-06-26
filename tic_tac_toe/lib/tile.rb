@@ -1,3 +1,4 @@
+# Represents a single tile on the 3x3 tic tac toe board
 class Tile
   EMPTY = :EMPTY
   X_SYMBOL = :X_SYMBOL
@@ -15,6 +16,14 @@ class Tile
   def value=(val)
     @value = val
     draw
+  end
+
+  def select
+    @win.color_set(Screen::HIGHLIGHT_COLOR)
+  end
+
+  def deselect
+    @win.color_set(Screen::NORMAL_COLOR)
   end
 
   private

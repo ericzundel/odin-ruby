@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'curses'
-require_relative '../board'
+require_relative '../lib/board'
 
 describe 'Board tests' do
   let(:mock_subwin) do
@@ -9,6 +9,7 @@ describe 'Board tests' do
                     setpos: nil,
                     addch: nil)
   end
+
   let(:mock_window) do
     instance_double(Curses::Window,
                     setpos: nil,
@@ -27,10 +28,14 @@ describe 'Board tests' do
     allow(Curses::Window).to receive(:subwin).and_return(mock_window)
   end
 
+  let(:mock_screen) do
+    instance_double(Screen,
+                    main_win: mock_window,
+                    side_size: 30)
+  end
+
   def board_maker
-    main_win = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
-    side_size = 30
-    Board.new(main_win, side_size)
+    Board.new(mock_screen)
   end
 
   context 'initialization tests' do
