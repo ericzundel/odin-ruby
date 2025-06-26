@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a single tile on the 3x3 tic tac toe board
 class Tile
   EMPTY = :EMPTY
@@ -19,10 +21,11 @@ class Tile
   end
 
   def select
+    @win.color_set(Screen::CURSOR_COLOR)
+    @win.bkgd(' ') # Set background color
+    @win.erase # Clear and fill with background
+    @win.box
     @win.color_set(Screen::HIGHLIGHT_COLOR)
-    @win.bkgd(' ')  # Set background color
-    @win.erase                          # Clear and fill with background
-    @win.box                            # Optional: draw a border
     draw
   end
 
@@ -40,7 +43,7 @@ class Tile
     when EMPTY
       # Do nothing
     when X_SYMBOL
-      (0..@width - 1).each do |x_val|
+      (0..(@width - 1)).each do |x_val|
         @win.setpos(x_val, x_val)
         @win.addch('X')
         @win.setpos(@height - x_val - 1, x_val)
@@ -48,13 +51,13 @@ class Tile
       end
 
     when O_SYMBOL
-      (1..@width - 1).each do |x_val|
+      (1..(@width - 1)).each do |x_val|
         @win.setpos(0, x_val)
         @win.addch('O')
         @win.setpos(@height - 1, x_val)
         @win.addch('O')
       end
-      (1..@height - 1).each do |y_val|
+      (1..(@height - 1)).each do |y_val|
         @win.setpos(y_val, 0)
         @win.addch('O')
         @win.setpos(y_val, @width - 1)

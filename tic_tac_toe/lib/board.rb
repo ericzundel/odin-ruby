@@ -2,9 +2,9 @@
 
 require 'curses'
 
-require_relative './grid'
-require_relative './tile'
-require_relative './screen'
+require_relative 'grid'
+require_relative 'tile'
+require_relative 'screen'
 
 # Container for the entire tic tac toe board
 class Board
@@ -31,7 +31,7 @@ class Board
   end
 
   # Add the letter x to a tile
-  def set_tile_x(x_pos, y_pos)
+  def set_tile_x(y_pos, x_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
 
@@ -40,7 +40,7 @@ class Board
   end
 
   # Add the letter o to a tile
-  def set_tile_o(x_pos, y_pos)
+  def set_tile_o(y_pos, x_pos)
     raise ArgumentError, 'X should be a value 0..2' unless x_pos.between?(0, 2)
     raise ArgumentError, 'Y should be a value 0..2' unless y_pos.between?(0, 2)
 
@@ -56,10 +56,10 @@ class Board
     cursor = choose_tile(cursor)
 
     if @next_player == X_PLAYER
-      set_tile_x(cursor[1], cursor[0])
+      set_tile_x(cursor[:row], cursor[:col])
       @next_player = O_PLAYER
     else
-      set_tile_o(cursor[1], cursor[0])
+      set_tile_o(cursor[:row], cursor[:col])
       @next_player = X_PLAYER
     end
   end
@@ -69,51 +69,44 @@ class Board
   def find_first_empty_tile
     (0..2).each do |row|
       (0..2).each do |col|
-        if @tiles[row][col].value == Tile::EMPTY
-          return [row, col]
-        end
+        return { row: row, col: col } if @tiles[row][col].value == Tile::EMPTY
       end
     end
-    raise RuntimeError, "No empty tiles: We should have determined a winner or tie already!"
+    raise 'No empty tiles: We should have determined a winner or tie already!'
   end
 
+  # Direction is a Curses::Key definition for one of the arrow keys
+  # cursor is a hash with keys :row and :col
   def find_empty_tile(direction, cursor)
     case direction
+    when Curses::Key::LEFT
+      cursor[:row] = (cursor[:row] - 1) % 3
+    when Curses::Key::RIGHT
+      cursor[:row] = (cursor[:row] + 1) % 3
     when Curses::Key::UP
-      cursor[0] = if cursor[0] != 0
-                      cursor[0] - 1
-                    else
-                      2
-                    end
+      cursor[:col] = (cursor[:col] - 1) % 3
+    when Curses::Key::DOWN
+      cursor[:col] = (cursor[:col] + 1) % 3
     end
     cursor
   end
 
   # Handle keyboard input to allow the user to choose a tile
-  # TODO: skip tiles that are currently occupied
+  # returns array [row, col]
   def choose_tile(cursor)
     loop do
       highlight_cursor(cursor)
-      @screen.print_status "#{@next_player}: It's your turn, use arrow keys and space to choose a tile #{cursor}: "
+      @screen.print_status "#{@next_player}: It's your turn, use arrow keys to move, space to choose #{cursor}: "
 
       input = @screen.getch
-      case input
-      when Curses::Key::UP
-        cursor = find_empty_tile(input, cursor)
-      when Curses::Key::DOWN
-        cursor[0] = (cursor[0] + 1) % 3
-      when Curses::Key::LEFT
-        cursor[1] = if cursor[1] != 0
-                      cursor[1] - 1
-                    else
-                      2
-                    end
-      when Curses::Key::RIGHT
-        cursor[1] = (cursor[1] + 1) % 3
-      when ' '
+      if input == ' '
         # The tile under the cursor is selected
-        clear_cursor
-        break
+        if @tiles[cursor[:row]][cursor[:col]].value == Tile::EMPTY
+          clear_cursor
+          break
+        end
+      else
+        cursor = find_empty_tile(input, cursor)
       end
       @screen.refresh
     end
@@ -121,10 +114,10 @@ class Board
   end
 
   # Highlight the tile under the cursor
-  # cursor: array of row, col for which tile is selected
+  # cursor: hash of :row, :col for which tile is selected
   def highlight_cursor(cursor)
     clear_cursor
-    @tiles[cursor[0]][cursor[1]].select
+    @tiles[cursor[:row]][cursor[:col]].select
   end
 
   # Remove the highlight from all tiles
@@ -153,7 +146,7 @@ class Board
     winner = test_three_tiles([@tiles[0][0], @tiles[1][1], @tiles[2][2]])
     return winner if winner != IN_PROGRESS
 
-    winner = test_three_tiles([@tiles[2][0], @tiles[1][1], @tiles[2][0]])
+    winner = test_three_tiles([@tiles[2][0], @tiles[1][1], @tiles[0][2]])
     return winner if winner != IN_PROGRESS
 
     # No winner and the board is board full? It's a tie

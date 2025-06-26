@@ -13,6 +13,7 @@
 class Screen
   NORMAL_COLOR = 1
   HIGHLIGHT_COLOR = 2
+  CURSOR_COLOR = 3
   attr_reader :main_win, :side_size
 
   def initialize
@@ -20,13 +21,10 @@ class Screen
     Curses.start_color
     @main_win = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
     @main_win.keypad = true
-    Curses.init_pair(NORMAL_COLOR, Curses::COLOR_BLACK, Curses::COLOR_YELLOW)
-    Curses.init_pair(HIGHLIGHT_COLOR, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
+    Curses.init_pair(HIGHLIGHT_COLOR, Curses::COLOR_BLACK, Curses::COLOR_YELLOW)
+    Curses.init_pair(NORMAL_COLOR, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
+    Curses.init_pair(CURSOR_COLOR, Curses::COLOR_BLUE, Curses::COLOR_YELLOW)
     @side_size = [Curses.lines, Curses.cols].min
-  end
-
-  def refresh
-    @main_win.refresh
   end
 
   def print_status(status)
