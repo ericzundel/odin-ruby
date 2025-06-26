@@ -4,6 +4,7 @@ require 'curses'
 
 require './lib/board'
 require './lib/screen'
+require './lib/fireworks'
 
 def wait_for_input(screen, message)
   screen.print_status("#{message} Thanks for playing! Press any key to exit.")
@@ -27,6 +28,7 @@ def run_test2_game(screen, board)
 end
 
 begin
+  
   screen = Screen.new
   board = Board.new(screen)
 
@@ -36,14 +38,18 @@ begin
   run_test2_game(screen, board) if !ARGV.empty? && ARGV[0] == 'test2'
 
   board.next_player_turn while board.winner == Board::IN_PROGRESS
-  message = case board.winner
-            when Board::X_PLAYER
-              'X won!'
-            when Board::O_PLAYER
-              'O won!'
-            else
-              'Tie!'
-            end
+
+  message = ''
+  if board.winner == Board::TIE
+    message = 'It\'s a tie!'
+  else
+    # Display fireworks celebration
+    fireworks = Fireworks.new(screen)
+    player_name = board.winner == Board::X_PLAYER ? 'X' : 'O'
+    fireworks.display_winner(player_name)
+    message = "Congratulations #{player_name}!"
+  end
+
   wait_for_input(screen, message)
 ensure
   screen.close
