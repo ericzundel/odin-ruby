@@ -20,11 +20,16 @@ class Tile
 
   def select
     @win.color_set(Screen::HIGHLIGHT_COLOR)
+    @win.bkgd(' ')  # Set background color
+    @win.erase                          # Clear and fill with background
+    @win.box                            # Optional: draw a border
     draw
   end
 
   def deselect
     @win.color_set(Screen::NORMAL_COLOR)
+    @win.bkgd(' ')
+    @win.erase
     draw
   end
 
@@ -56,5 +61,6 @@ class Tile
         @win.addch('O')
       end
     end
+    @win.refresh
   end
 end

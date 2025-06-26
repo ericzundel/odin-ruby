@@ -11,7 +11,7 @@ def wait_for_input(screen, message)
   screen.getch
 end
 
-def run_test_game(screen, board)
+def run_test1_game(screen, board)
   board.set_tile_o(0, 0)
   board.set_tile_x(1, 1)
   board.set_tile_o(0, 1)
@@ -20,10 +20,21 @@ def run_test_game(screen, board)
   screen.refresh
 end
 
+def run_test2_game(screen, board)
+  board.set_tile_o(0, 0)
+  board.set_tile_x(1, 1)  
+  screen.refresh
+end
+
 begin
   screen = Screen.new
   board = Board.new(screen)
-  run_test_game(screen, board) if !ARGV.empty? && ARGV[0] == 'test'
+
+  # pass 'test1' on the commandline as an exercise for testing a complete game
+  run_test1_game(screen, board) if !ARGV.empty? && ARGV[0] == 'test1'
+  # pass 'test2' on the commandline to test a partial game
+  run_test2_game(screen, board) if !ARGV.empty? && ARGV[0] == 'test2'
+
   board.next_player_turn while board.winner == Board::IN_PROGRESS
   message = case board.winner
             when Board::X_PLAYER
@@ -33,7 +44,6 @@ begin
             else
               'Tie!'
             end
-
   wait_for_input(screen, message)
 ensure
   screen.close

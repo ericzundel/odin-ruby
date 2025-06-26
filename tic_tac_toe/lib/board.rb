@@ -77,20 +77,29 @@ class Board
     raise RuntimeError, "No empty tiles: We should have determined a winner or tie already!"
   end
 
-  # Handle keyboard input to allow the user to choose a tile
-  # TODO: skip tiles that are currently occupied
-  def choose_tile(cursor)
-    loop do
-     # highlight_cursor(cursor)
-      @screen.print_status "#{@next_player}: It's your turn, use arrow keys and space to choose a tile #{cursor}: "
-
-      case @screen.getch
-      when Curses::Key::UP
-        cursor[0] = if cursor[0] != 0
+  def find_empty_tile(direction, cursor)
+    case direction
+    when Curses::Key::UP
+      cursor[0] = if cursor[0] != 0
                       cursor[0] - 1
                     else
                       2
                     end
+    end
+    cursor
+  end
+
+  # Handle keyboard input to allow the user to choose a tile
+  # TODO: skip tiles that are currently occupied
+  def choose_tile(cursor)
+    loop do
+      highlight_cursor(cursor)
+      @screen.print_status "#{@next_player}: It's your turn, use arrow keys and space to choose a tile #{cursor}: "
+
+      input = @screen.getch
+      case input
+      when Curses::Key::UP
+        cursor = find_empty_tile(input, cursor)
       when Curses::Key::DOWN
         cursor[0] = (cursor[0] + 1) % 3
       when Curses::Key::LEFT
@@ -103,7 +112,7 @@ class Board
         cursor[1] = (cursor[1] + 1) % 3
       when ' '
         # The tile under the cursor is selected
-        #clear_cursor
+        clear_cursor
         break
       end
       @screen.refresh
@@ -114,6 +123,7 @@ class Board
   # Highlight the tile under the cursor
   # cursor: array of row, col for which tile is selected
   def highlight_cursor(cursor)
+    clear_cursor
     @tiles[cursor[0]][cursor[1]].select
   end
 

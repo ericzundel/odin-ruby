@@ -5,9 +5,8 @@
 #
 # begin
 #   screen = Screen.new
-#   main_win = screen.main_win
 #   ...
-# finally
+# ensure
 #   screen.close
 # end
 #
@@ -44,7 +43,7 @@ class Screen
   def refresh
     @main_win.refresh
   end
-  
+
   # Call this method before ending the program to restore the screen
   def close
     @main_win.close
