@@ -14,7 +14,7 @@ class Guess
     @clue_pegs = []
   end
 
-  def code_pegs=
+  def code_pegs=(code_pegs)
     raise ArgumentError, "Expected 4 pegs, got #{code_pegs}" if code_pegs.length != 4
 
     @code_pegs = code_pegs

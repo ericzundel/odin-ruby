@@ -1,3 +1,5 @@
+# rubocop:disable Style/FrozenStringLiteralComment
+
 require 'code_peg'
 require 'clue_peg'
 require 'guess'
@@ -36,13 +38,31 @@ describe SecretCode do
 
   context 'when same order' do
     it 'matches a guess' do
-      expect(code1.match?(good_guess_for_code1)).to eq(true)
+      expect(code1.match?(good_guess_for_code1)).to be(true)
+    end
+
+    it 'returns proper clue pegs' do
+      clue_pegs = code1.clue_pegs(good_guess_for_code1)
+      expect(clue_pegs.length).to eq(4)
+      expect(clue_pegs[0].color).to eq(CluePeg::BLACK)
+      expect(clue_pegs[1].color).to eq(CluePeg::BLACK)
+      expect(clue_pegs[2].color).to eq(CluePeg::BLACK)
+      expect(clue_pegs[3].color).to eq(CluePeg::BLACK)
     end
   end
 
   context 'when different order' do
     it "doesn't match a guess" do
-      expect(code1.match?(close_guess_for_code1)).to eq(false)
+      expect(code1.match?(close_guess_for_code1)).to be(false)
+    end
+
+    it 'returns proper clue pegs' do
+      clue_pegs = code1.clue_pegs(close_guess_for_code1)
+      expect(clue_pegs.length).to eq(4)
+      expect(clue_pegs[0].color).to eq(CluePeg::BLACK)
+      expect(clue_pegs[1].color).to eq(CluePeg::BLACK)
+      expect(clue_pegs[2].color).to eq(CluePeg::WHITE)
+      expect(clue_pegs[3].color).to eq(CluePeg::WHITE)
     end
   end
 end

@@ -44,9 +44,10 @@ class SecretCode
 
     unmatched_guesses.each do |guess_peg_color|
       if unmatched_code.include?(guess_peg_color)
-        white_pegs.push(guess_peg_color)
+        white_pegs.push(CluePeg.new(CluePeg::WHITE))
         unmatched_code.delete_at(unmatched_code.index(guess_peg_color)) if unmatched_code.include?(guess_peg_color)
       end
     end
+    [black_pegs, white_pegs].flatten
   end
 end
