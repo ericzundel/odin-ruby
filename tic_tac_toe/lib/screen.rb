@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'curses'
+
 # The Screen class holds all the curses state
 # Note, you MUST call close before exiting if you want your terminal to return to normal
 #

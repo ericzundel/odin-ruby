@@ -28,9 +28,9 @@ def run_test2_game(screen, board)
 end
 
 begin
-  
   screen = Screen.new
-  raise "Make your terminal at least 28 x 80" if screen.side_size < 28
+  raise 'Make your terminal at least 28 x 80' if screen.side_size < 28
+
   board = Board.new(screen)
 
   # pass 'test1' on the commandline as an exercise for testing a complete game

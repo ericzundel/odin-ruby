@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'secret_code'
-require 'guess'
+require_relative 'secret_code'
+require_relative 'guess'
 
 # Represents the game board with a configurable number of guesses
 class Board

@@ -2,7 +2,7 @@
 
 require 'set'
 
-require 'code_peg'
+require_relative 'code_peg'
 
 # Stores the 4 peg secret code
 class SecretCode

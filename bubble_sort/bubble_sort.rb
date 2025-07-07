@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 def bubble_sort(list)
   result = []
   remains = list.clone
 
-  until remains.length == 0
+  until remains.empty?
     min_offset = 0
-    min_value = 99999999999999999999
+    min_value = 99_999_999_999_999_999_999
     remains.each_with_index do |elem, idx|
       if elem < min_value
         min_offset = idx
